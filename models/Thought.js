@@ -8,7 +8,7 @@ const ThoughtSchema = new Schema(
      type: String,
      required: "You need to leave a thought.",
      length: 1,
-      maxlength: 200
+      maxlength: 280
    },
     createdAt: {
       type: Date,
@@ -29,7 +29,7 @@ const ThoughtSchema = new Schema(
       id: false
   }
 );
-// retrieves lenght of thought's reactions array field on query
+// retrieves length of thought's reactions array field on query
 ThoughtSchema.virtual('reactionCount').get(function() {
  return this.reactions.length;
 });
