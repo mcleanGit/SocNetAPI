@@ -32,7 +32,16 @@ const userController = {
       });
  },
  // create new user
-
+  createUser(req, res) {
+    User.create(req.body)
+      .then((dbUserData) => {
+        res.json(dbUserData);    
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
  // update user by id
 
  // delete user by id
