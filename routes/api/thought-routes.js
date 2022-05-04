@@ -1,14 +1,10 @@
 const router = require('express').Router();
 
 const {
- getAllThought,
- getThoughtById,
- createThought,
- // need to push created thought _id to user thought array field
- updateThoughtById,
- deleteThoughtById
- // todo :thoughtId/reactions post and delete
-
+ addThought,
+ addReaction,
+ removeThought,
+ removeReaction
 } = require('../../controllers/thought-controller');
 
 // /api/thought/<userId>
