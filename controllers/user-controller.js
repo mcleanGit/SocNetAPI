@@ -1,9 +1,8 @@
-const res = require('express/lib/response');
-const { User, Thought } = require('../models/');
+const { User, Thought } = require('../models');
 
 const userController = {
  // get all users
- getUsers(req, res) {
+ getUser(req, res) {
   User.find()
    .select('-__v')
    .then((dbUserData) => {
@@ -60,17 +59,49 @@ const userController = {
         .catch(err => res.json(err));
   },
  // delete user by id
-  deleteUser({ params }, res) {
-    User.findOneAndDelete({_id: params.id })
-      .then(dbUserData => res.json(dbUserData))
-      .catch(err => res.json(err));  
- // bonus: remove user's associated thoughts on delete ? middleware...
-    userSchema.pre('remove', function(next) {
-  // 'this' is the user being removed. 
-    Thoughts.remove({user_id: this._id}).exec();
-    next(); 
-  });
-  }
-}
+  deleteUser(req, res) {
+    User.findOneAndDelete({_id: req.params.userid })
+      .then((dbUserData) => { 
+        if (!dbUserData) {
+          return res.status(404).json ({ message: 'No user with this id' });
+        }
+        // bonus: remove user's associated thoughts on delete...
+        return Thought.deleteMany( {_id: { $in: dbUserData.thoughts } });
+      })
+       .then(() => {
+        res.json({ message: 'User and associated thoughts deleted!'});
+       })      
+      .catch((err) => { res.status(500).json(err);  
+      });
+    },
+    // add Friend
+  addFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends:req.params.friendId } },
+      { new: true })
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          return res.status(404).json({ message: 'No user found with this id!' });
+        }
+        res.json(dbUserData);
+      })
+        .catch(err => res.json(err));
+  },
+  // remove friend
+  removeFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends:req.params.friendId } },
+      { new: true })
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          return res.status(404).json({ message: 'No user found with this id!' });
+        }
+        res.json(dbUserData);
+      })
+        .catch(err => res.json(err));
+  },
+};
 
 module.exports = userController;
