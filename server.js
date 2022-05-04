@@ -1,25 +1,14 @@
 const express = require('express');
-const mongoose = require('mongoose');
-
+const db = require('./config/connection');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// public not required for this app
-app.use(express.static('public'));
 
-app.use(require('./routes/api'));
-
-// check sytax here
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/SocialNetworkAPI', {
-  useFindAndModify: false,
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+app.use(require('./routes'));
+db.once('open', () => {
+  app.listen(PORT, () => { console.log(`Connected on localhost:${PORT}`);
+});
 });
 
-// Use this to log mongo queries being executed!
-mongoose.set('debug', true);
-
-
-app.listen(PORT, () => console.log(`Connected on localhost:${PORT}`));
