@@ -1,4 +1,4 @@
-const { Thought, User } = require('../models/');
+const { Thought, User } = require('../models');
 
 const thoughtController = {
  // add thought to user
@@ -61,7 +61,7 @@ const thoughtController = {
   },
   // remove reaction
   removeReaction( { params }, res) {
-   Thought.fineOneAndUpdate(
+   Thought.findOneAndUpdate(
     { _id: params.thoughtId },
     { $pull: { reactions: { replyId: params.replyId } } },
     { new: true }
