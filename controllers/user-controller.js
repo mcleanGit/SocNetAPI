@@ -64,8 +64,13 @@ const userController = {
     User.findOneAndDelete({_id: params.id })
       .then(dbUserData => res.json(dbUserData))
       .catch(err => res.json(err));  
+ // bonus: remove user's associated thoughts on delete ? middleware...
+    userSchema.pre('remove', function(next) {
+  // 'this' is the user being removed. 
+    Thoughts.remove({user_id: this._id}).exec();
+    next(); 
+  });
   }
- // bonus: remove user's associated thoughts on delete
-};
+}
 
 module.exports = userController;
