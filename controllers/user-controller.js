@@ -1,5 +1,5 @@
 const res = require('express/lib/response');
-const { User, Thought } = require('../models');
+const { User, Thought } = require('../models/');
 
 const userController = {
  // get all users
