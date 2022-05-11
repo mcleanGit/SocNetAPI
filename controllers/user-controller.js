@@ -3,7 +3,7 @@ const { User, Thought } = require('../models');
 const userController = {
  // get all users
  getUsers(req, res) {
-  User.find({})
+  User.find()
    .select('-__v')
    .then((dbUserData) => {
     res.json(dbUserData);
@@ -48,15 +48,18 @@ const userController = {
       {
         $set: req.body,
       },
-      { new: true, runValidators: true })
-      .then(dbUserData => {
+      {  runValidators: true,
+          new: true,
+      })
+      .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: 'No user found with this id!' });
-          return;
+          return res.status(404).json({ message: 'No user found with this id!' });
         }
         res.json(dbUserData);
       })
-        .catch(err => res.json(err));
+        .catch((err) => {
+          res.status(500).json(err);
+      });
   },
  // delete user by id
   deleteUser(req, res) {
@@ -86,7 +89,8 @@ const userController = {
         }
         res.json(dbUserData);
       })
-        .catch(err => res.json(err));
+      .catch((err) => { res.status(500).json(err);  
+      });
   },
   // remove friend
   removeFriend(req, res) {
@@ -100,7 +104,8 @@ const userController = {
         }
         res.json(dbUserData);
       })
-        .catch(err => res.json(err));
+      .catch((err) => { res.status(500).json(err);  
+      });
   },
 };
 
