@@ -12,9 +12,7 @@ router.route('/:userId').post(addThought);
 
 // /api/thought/<userId>/<thoughtId>
 router
- .route('/:userId/:thoughtId')
- .put(addReaction)
- .delete(removeThought);
+ .route('/:userId/:thoughtId').put(addReaction).delete(removeThought);
  // to check the preceding
 
  // api/thought/<userId>/<thoughtId>/<reactionId>
