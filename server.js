@@ -9,6 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(require('./routes'));
 db.once('open', () => {
   app.listen(PORT, () => { console.log(`Connected on localhost:${PORT}`);
-});
+  });
 });
 
