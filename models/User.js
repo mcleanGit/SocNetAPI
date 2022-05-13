@@ -31,6 +31,7 @@ const UserSchema = new Schema(
   {
     toJSON: {
       virtuals: true,
+      getters: true
     },
     // prevents virtuals from creating duplicate of _id as `id`
     id: false
@@ -39,7 +40,8 @@ const UserSchema = new Schema(
 
 // get total count that retrieves length of user's friends array field on query
 UserSchema.virtual('friendCount').get(function() {
-  return this.friends.length;
+  return this.friends.reduce(
+    (total, friend) => total + friend.reactions.length + 1, 0);
 });
 
 const User = model('User', UserSchema);
