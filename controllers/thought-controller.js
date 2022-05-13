@@ -79,15 +79,15 @@ deleteThought(req, res) {
  // { params, body } changed back to req, res
   addReaction(req, res) {
    Thought.findOneAndUpdate(
-    { _id: params.thoughtId },
+    { _id: req.params.thoughtId },
     { $set: req.body }, 
     { runValidators: true, new: true }) 
-   .then(dbUserData => {
-    if (!dbUserData) {
+   .then(dbThoughtData => {
+    if (!dbThoughtData) {
      res.status(404).json({ message: 'No user found with this id!' });
      return;
     }
-    res.json(dbUserData);
+    res.json(dbThoughtData);
    })
     .catch(err => res.json(err));
   },
