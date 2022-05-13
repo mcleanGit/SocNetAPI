@@ -43,7 +43,7 @@ const thoughtController = {
      res.json( { message: 'Thought successfully created!'});
    })
     .catch((err) => {
-      res.status(500).json(err);
+    res.status(500).json(err);
     });
  },
  // update thought
