@@ -1,6 +1,6 @@
 # SocNetAPI
 
-SocNetAPI is a social network API (Application Programming Interface) that uses Express.js [Express](https://www.npmjs.com/package/express)for routing and a MongoDB database using the Mongoose ODM [Mongoose](https://www.npmjs.com/package/mongoose). In addition, the application uses native JavaScript `Date` to provide automatic timestamps for user-generated input.
+SocNetAPI is a social network API (Application Programming Interface) that uses Express.js [Express](https://www.npmjs.com/package/express)for routing and a MongoDB database with the Mongoose ODM (Object Data Modeling) library ([Mongoose](https://www.npmjs.com/package/mongoose). In addition, the application uses native JavaScript `Date` to provide automatic timestamps for user-generated input.
 
 The application is not deployed, but its GitHub repository can be found at [GitHub] https://github.com/mcleanGit/SocNetAPI.  A walkthrough video, linked to this README (below), outlines the technical criteria and demonstrates the functionality of the application using Insomnia.
 
@@ -21,7 +21,7 @@ In addition, Users (by userId) can have Friends added to (POST), or removed from
 The parallel situation for Thoughts is Reactions. A Reaction may be added to (POST), or removed from (DELETE), a Thought (by thoughtId). As noted above, Reactions is a Schema-only model: the reactionId is generated using Mongoose's ObjectId data type. In Insomnia, this functionality is tested via API routes `(/api/thoughts/thoughtId/reactions)` and for deletion (`/api/thoughts/thoughtId/reactions/reactionId)`. A `virtual` added to the Thought ThoughtSchema model generates a `reactionCount` to the Thought data.
 
 ## Technical Elements
-The application uses Express, MongoDB, and Mongoose, as well as the native JavaScript Date function to provide timestamps.
+The application uses Express, MongoDB, and Mongoose, as well as the native JavaScript Date function as a utility to provide timestamps. The main components of the applications are Models, Controllers, and API Routes.
 
 ### Models
 **User**
