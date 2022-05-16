@@ -1,213 +1,62 @@
-# 18 NoSQL: Social Network API
+# SocNetAPI
 
-MongoDB is a popular choice for many social networks due to its speed with large amounts of data and flexibility with unstructured data. Over the last part of this course, you’ll use several of the technologies that social networking platforms use in their full-stack applications. Because the foundation of these applications is data, it’s important that you understand how to build and structure the API first.
+SocNetAPI is a social network API (Application Programming Interface) that uses Express.js [Express](https://www.npmjs.com/package/express)for routing and a MongoDB database using the Mongoose ODM [Mongoose](https://www.npmjs.com/package/mongoose). In addition, the application uses native JavaScript `Date` to provide automatic timestamps for user-generated input.
 
-Your challenge is to build an API for a social network using Express.js for routing, a MongoDB database, and the Mongoose ODM. In addition to using the [Express](https://www.npmjs.com/package/express) and [Mongoose](https://www.npmjs.com/package/mongoose) packages, you may also optionally use a JavaScript date library of your choice or the native JavaScript `Date` object to format timestamps.
-
-Because this application won’t be deployed, you’ll also need to create a walkthrough video that demonstrates its functionality and all of the following acceptance criteria being met. You’ll need to submit a link to the video and add it to the README of your project.
-
+The application is not deployed, but its GitHub repository can be found at [GitHub] https://github.com/mcleanGit/SocNetAPI.  A walkthrough video, linked to this README (below), outlines the technical criteria and demonstrates the functionality of the application using Insomnia.
 
 ## User Story
 
-```md
-AS A social media startup
-I WANT an API for my social network that uses a NoSQL database
-SO THAT my website can handle large amounts of unstructured data
-```
+The API is developed for a context that might suit a social media startup. Specifically, it references an historical and historic grouping of renowned physicists Ralph Alpher, Hans Bethe, and George Gamow, who co-authored an important piece of cosmology research that became known, with due wit, as the 'alpha-beta-gamma' article. The application's hypothetical Users and Thoughts build on that, taking into account our new societal relation to the Greek alphabet in the time of the COVID pandemic. The API uses a NoSQL database to be able to handle (eventually) large and unstructured data.
 
+## Application Description
 
-## Acceptance Criteria
+The application is invoked from the command line with `npm start`, which connects to `node server.js` and syncs the Mongoose models to the MondoDB database. The models for the application are `User` and `Thought`. The third 'model', `Reaction`, is not a model but effects a subdocument schema in the Thought model. (See Models, further below).
 
-```md
-GIVEN a social network API
-WHEN I enter the command to invoke the application
-THEN my server is started and the Mongoose models are synced to the MongoDB database
-WHEN I open API GET routes in Insomnia for users and thoughts
-THEN the data for each of these routes is displayed in a formatted JSON
-WHEN I test API POST, PUT, and DELETE routes in Insomnia
-THEN I am able to successfully create, update, and delete users and thoughts in my database
-WHEN I test API POST and DELETE routes in Insomnia
-THEN I am able to successfully create and delete reactions to thoughts and add and remove friends to a user’s friend list
-```
+Insomnia is used to test the routes for Users and Thoughts. API GET routes for Users and Thoughts are displayed in formatted JSON. GET routes are set up for all Users `(/api/users)` and all Thoughts `(/api/thoughts)`, and for a single User or single Thought retrieved by the auto-generated UserId or ThoughtId. 
 
+New Users and Thoughts may also be created (POST) using those same API routes. Both may be updated (PUT) or deleted (DELETE) using the API routes tested in Insomnia with the appropriate generated UserId or ThoughtId `(api/users/userId)` or `(/api/thoughts/thoughtId)`. When a Thought is created the thoughtId is pushed to the thoughts array for that User. When a User is deleted, their associated thoughts are also deleted. (This responds to a 'bonus' challenge that uses `deleteMany` at line 72ff of the `controllers/thought-controller.js` file.)
 
-## Mock-Up
+In addition, Users (by userId) can have Friends added to (POST), or removed from (DELETE), their Friends list array `(/api/users/userId/friends)` and, for deletion, `(/api/users/userId/friends/friendId)`. These routes are also tested in Insomnia. When a Friend is created, the friendId is added to the User friends array. A `virtual` added to the User UserSchema model also appends a `friendCount` to the User data.
 
-The following animations show examples of the application's API routes being tested in Insomnia.
+The parallel situation for Thoughts is Reactions. A Reaction may be added to (POST), or removed from (DELETE), a Thought (by thoughtId). As noted above, Reactions is a Schema-only model: the reactionId is generated using Mongoose's ObjectId data type. In Insomnia, this functionality is tested via API routes `(/api/thoughts/thoughtId/reactions)` and for deletion (`/api/thoughts/thoughtId/reactions)`. A `virtual` added to the Thought ThoughtSchema model generates a `reactionCount` to the Thought data.
 
-The first animation shows GET routes to return all users and all thoughts being tested in Insomnia:
-
-![Homework Demo 01](./Assets/18-nosql-homework-demo-01.gif)
-
-The second animation shows GET routes to return a single user and a single thought being tested in Insomnia:
-
-![Homework Demo 02](./Assets/18-nosql-homework-demo-02.gif)
-
-The third animation shows the POST, PUT, and DELETE routes for users being tested in Insomnia:
-
-![Homework Demo 03](./Assets/18-nosql-homework-demo-03.gif)
-
-Your walkthrough video should also show the POST, PUT, and DELETE routes for thoughts being tested in Insomnia.
-
-The final animation shows the POST and DELETE routes for a user’s friend list being tested in Insomnia:
-
-![Homework Demo 04](./Assets/18-nosql-homework-demo-04.gif)
-
-Your walkthrough video should also show the POST and DELETE routes for reactions to thoughts being tested in Insomnia.
-
-
-## Getting Started
-
-Use the following guidelines to set up your models and API routes:
+## Technical Elements
+The applications uses Express, MongoDB, and Mongoose, as well as the native JavaScript Date function to provide timestamps.
 
 ### Models
-
 **User**
-
-* `username`
-    * String
-    * Unique
-    * Required
-    * Trimmed
-
-* `email`
-    * String
-    * Required
-    * Unique
-    * Must match a valid email address (look into Mongoose's matching validation)
-
-* `thoughts`
-    * Array of `_id` values referencing the `Thought` model
-
-* `friends`
-    * Array of `_id` values referencing the `User` model (self-reference)
-
-**Schema Settings**
-
-Create a virtual called `friendCount` that retrieves the length of the user's `friends` array field on query
-
----
+includes username (a UserId is autogenerated), email (with validation check), thoughts array, friends array, and a schema-settings virtual for friendCount.
 
 **Thought**
+includes thoughtText (a ThoughtId) is autogenerated), createdAt(timestamp), username, a reactions array, and a virtual for reactionCount.
 
-* `thoughtText`
-    * String
-    * Required
-    * Must be between 1 and 280 characters
+**Reaction**
+includes reactionBody, username, createdAt(timestamp), and reactionId autogenerated via Mongoose's ObjectId data type. Reaction functions, not as a separate model, but as a subdocument schema in the Thought model.
 
-* `createdAt`
-    * Date
-    * Set default value to the current timestamp
-    * Use a getter method to format the timestamp on query
+### Controllers
+The major work of structuring CRUD methods (create, read, update, delete) for the database is handled by the `Controllers`.
 
-* `username` - Which user created this thought
-    * String
-    * Required
+**user-controller**
+includes methods (with Mongoose format functions) to getUsers (User.find), getSingleUser (User.findOne)--populated with friends and thoughts, createUser (User.create), updateUser (User.findOneAndUpdate), and deleteUser (User.findOneAndDelete), as well as addFriend and removeFriend (both which are based on the User.findOneAndUpdate format).
+Similarly...
 
-* `reactions` (like replies)
-    * Array of nested documents created with the `reactionSchema`
-
-**Schema Settings**
-
-Create a virtual called `reactionCount` that retrieves the length of the thought's `reactions` array field on query
-
----
-
-**Reaction** (SCHEMA ONLY)
-
-* `reactionId`
-    * Use Mongoose's ObjectId data type
-    * Default value is set to a new ObjectId
-
-* `reactionBody`
-    * String
-    * Required
-    * 280 character maximum
-
-* `username`
-    * String
-    * Required
-
-* `createdAt`
-    * Date
-    * Set default value to the current timestamp
-    * Use a getter method to format the timestamp on query
-
-**Schema Settings**
-
-This will not be a model, but rather used as the `reaction` field's subdocument schema in the `Thought` model.
-
+**thought-controller**
+includes methods (with Mongoose format functions) to getThoughts (Thought.find), getSingleThought (Thought.findOne), createThought (Thought.create), updateThought (Thought.findOneAndUpdate), and delete Thought (Thought.findOneAndDelete), as well as addReaction and deleteReaction (both of which are based on the Thought.findOneAndUpdate format).
 
 ### API Routes
+As noted in the application description above, API routes are established for users (`/api/users`) to GET all, or GET single by `_id`, with populated thought and friend data.  POST is used to create a new user with username and email JSON data input. PUT and DELETE routes update and delete user data based on userId. When a user is deleted, the associated thoughts are also deleted.
 
-**`/api/users`**
+API routes are established for thoughts (`/api/thoughts`) to GET all, or GET single by `_id`. POST is used to create a new thought with thoughtText and username. PUT and DELETE routes update and delete thought data based on thoughtId. When a thought is deleted, its associated reactions are also deleted.
 
-* `GET` all users
-
-* `GET` a single user by its `_id` and populated thought and friend data
-
-* `POST` a new user:
-
-```json
-// example data
-{
-  "username": "lernantino",
-  "email": "lernantino@gmail.com"
-}
-```
-
-* `PUT` to update a user by its `_id`
-
-* `DELETE` to remove user by its `_id`
-
-**BONUS**: Remove a user's associated thoughts when deleted
-
----
-
-**`/api/users/:userId/friends/:friendId`**
-
-* `POST` to add a new friend to a user's friend list
-
-* `DELETE` to remove a friend from a user's friend list
-
----
-
-**`/api/thoughts`**
-
-* `GET` to get all thoughts
-
-* `GET` to get a single thought by its `_id`
-
-* `POST` to create a new thought (don't forget to push the created thought's `_id` to the associated user's `thoughts` array field)
-
-```json
-// example data
-{
-  "thoughtText": "Here's a cool thought...",
-  "username": "lernantino",
-  "userId": "5edff358a0fcb779aa7b118b"
-}
-```
-
-* `PUT` to update a thought by its `_id`
-
-* `DELETE` to remove a thought by its `_id`
-
----
-
-**`/api/thoughts/:thoughtId/reactions`**
-
-* `POST` to create a reaction stored in a single thought's `reactions` array field
-
-* `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
+All routes are tested in *Insomnia*, as demonstrated in the walkthrough video. (See link, below.)
 
 ## Review
 
-You are required to submit BOTH of the following for review:
+The GitHub repository for the application is found at:
+[GitHub Repo](https://github.com/mcleanGit/SocNetAPI)
 
-* A walkthrough video demonstrating the functionality of the application and all of the acceptance criteria being met.
-
-* The URL of the GitHub repository. Give the repository a unique name and include a README describing the project.
+A walkthrought video is found at:
+[SocNetAPI-video] ToADD
 
 - - -
 © 2022 Trilogy Education Services, LLC, a 2U, Inc. brand. Confidential and Proprietary. All Rights Reserved.
