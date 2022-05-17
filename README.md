@@ -56,7 +56,7 @@ The GitHub repository for the application is found at:
 [GitHub Repo](https://github.com/mcleanGit/SocNetAPI)
 
 A walkthrough video is found at:
-[SocNetAPI-video] ToADD
+[SocNetAPI-video](https://vimeo.com/710458864/23b8d12d48)
 
 - - -
 © 2022 Trilogy Education Services, LLC, a 2U, Inc. brand. Confidential and Proprietary. All Rights Reserved.
